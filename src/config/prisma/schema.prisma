@@ -1,0 +1,30 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url = env("DATABASE_URL")
+}
+
+model Comanda {
+	id String @id @default(uuid())
+	cellPhone String @unique
+	name String
+	amount Int
+	transactions Transaction[]
+}
+
+model Transaction {
+	id String @id @default(uuid())
+	comandaId String
+	comanda Comanda @relation(fields: [comandaId], references: [id])
+	description String
+	amount Int
+	type TransactionType
+}
+
+enum TransactionType {
+	payment
+	charge
+}
