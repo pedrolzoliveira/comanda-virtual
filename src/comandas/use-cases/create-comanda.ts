@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { prismaClient } from '@/config/prisma/client'
 
 interface CreateComandaParams {
   name: string
@@ -6,7 +6,6 @@ interface CreateComandaParams {
 }
 
 export const createComanda = async ({ name, cellPhone }: CreateComandaParams) => {
-  const prismaClient = new PrismaClient()
   return await prismaClient.comanda.create({
     data: {
       name,
