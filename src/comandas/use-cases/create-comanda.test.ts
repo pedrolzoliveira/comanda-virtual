@@ -24,4 +24,23 @@ describe('createComanda', () => {
       })
     })
   })
+
+  describe('tries to create two comandas with same cellPhone', () => {
+    const CELL_PHONE = faker.phone.number()
+    beforeAll(async () => {
+      return await createComanda({
+        name: faker.name.fullName(),
+        cellPhone: CELL_PHONE
+      })
+    })
+
+    it('throws', async () => {
+      await expect(
+        createComanda({
+          name: faker.name.fullName(),
+          cellPhone: CELL_PHONE
+        })
+      ).rejects.toThrow()
+    })
+  })
 })
