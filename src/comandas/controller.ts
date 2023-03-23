@@ -1,15 +1,21 @@
-import { type NextFunction, type Request, type Response } from 'express'
+import { schemaValidator } from '@/http/middlawares/schema-validator'
+import { type Request, type Response } from 'express'
+import { createComanda } from './use-cases/create-comanda'
 
 export const comandasController = {
   create: [
-    (req: Request, res: Response, next: NextFunction) => {
-      if (!req.body.name || !req.body.cellPhone) {
-        return res.sendStatus(400)
+    schemaValidator({
+      name: {
+        isString: true
+      },
+      cellPhone: {
+        isString: true
       }
-      next()
-    },
+    }),
     async (req: Request, res: Response) => {
-      return res.send(req.body)
+      const data = req.body
+      const comanda = await createComanda(data)
+      return res.status(201).send(comanda)
     }
   ]
 } as const
