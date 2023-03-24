@@ -39,9 +39,9 @@ export const comandasController = {
       } catch (error) {
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
           return res.sendStatus(404)
-        } else {
-          return res.sendStatus(200)
         }
+
+        return res.sendStatus(500)
       }
     }
   ]
