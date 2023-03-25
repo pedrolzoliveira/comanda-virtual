@@ -1,10 +1,84 @@
 import { server } from '@/http/server'
 import { factory } from '@/utils/test/factory'
 import { faker } from '@faker-js/faker'
+import { type Transaction, type Comanda } from '@prisma/client'
 import request, { type Response } from 'supertest'
 
 describe('comandasController', () => {
   let response: Response
+  describe('GET /comandas', () => {
+    const makeRequest = async (data: any) => await request(server).get('/comandas').query(data)
+
+    describe('2XX', () => {
+      describe('gets the comanda', () => {
+        let COMANDA: Comanda
+        beforeAll(async () => {
+          COMANDA = await factory.createComanda()
+          response = await makeRequest({ id: COMANDA.id })
+        })
+
+        it('returns 200', () => {
+          expect(response.statusCode).toBe(200)
+        })
+
+        it('returns the right body', () => {
+          expect(response.body).toEqual(COMANDA)
+        })
+      })
+
+      describe('gets the comanda with transactions', () => {
+        let COMANDA: Comanda
+        let TRANSACTIONS: Transaction[]
+
+        beforeAll(async () => {
+          COMANDA = await factory.createComanda()
+          TRANSACTIONS = await Promise.all(Array(2).fill(null).map(async () => await factory.createTransaction({ comandaId: COMANDA.id })))
+          response = await makeRequest({ id: COMANDA.id, transactions: true })
+        })
+
+        it('returns 200', () => {
+          expect(response.statusCode).toBe(200)
+        })
+
+        it('returns the right body', () => {
+          expect(response.body).toEqual({
+            ...COMANDA,
+            transactions: TRANSACTIONS
+          })
+        })
+      })
+    })
+
+    describe('4XX', () => {
+      describe('tries to make a request with transactions flag not being a boolean', () => {
+        beforeAll(async () => {
+          response = await makeRequest({ id: faker.datatype.uuid(), transactions: faker.random.word() })
+        })
+
+        it('returns 400', () => {
+          expect(response.statusCode).toBe(400)
+        })
+      })
+      describe('tries to make a request without an id', () => {
+        beforeAll(async () => {
+          response = await makeRequest({})
+        })
+
+        it('returns 400', () => {
+          expect(response.statusCode).toBe(400)
+        })
+      })
+      describe('tries to make a request with a random word as id', () => {
+        beforeAll(async () => {
+          response = await makeRequest({ id: faker.random.word() })
+        })
+
+        it('returns 400', () => {
+          expect(response.statusCode).toBe(400)
+        })
+      })
+    })
+  })
   describe('POST /comandas', () => {
     const makeRequest = async (data: any) => await request(server).post('/comandas').send(data)
 
