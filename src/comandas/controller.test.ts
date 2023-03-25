@@ -22,7 +22,7 @@ describe('comandasController', () => {
         })
 
         it('returns the right body', () => {
-          expect(response.body).toEqual(COMANDA)
+          expect(response.body).toEqual({ ...COMANDA, createdAt: expect.any(String) })
         })
       })
 
@@ -43,7 +43,12 @@ describe('comandasController', () => {
         it('returns the right body', () => {
           expect(response.body).toEqual({
             ...COMANDA,
-            transactions: TRANSACTIONS
+            createdAt: expect.any(String),
+            // TODO
+            // Use something order than arrayContaining
+            // https://github.com/jest-community/jest-extended/blob/main/src/matchers/toIncludeAllMembers.js
+            // https://github.com/jest-community/jest-extended/issues/114
+            transactions: expect.arrayContaining(TRANSACTIONS.map(transaction => ({ ...transaction, createdAt: expect.any(String) })))
           })
         })
       })
@@ -102,7 +107,8 @@ describe('comandasController', () => {
             id: expect.any(String),
             name: COMANDA_DATA.name,
             cellPhone: COMANDA_DATA.cellPhone,
-            amount: 0
+            amount: 0,
+            createdAt: expect.any(String)
           })
         })
       })
@@ -152,7 +158,8 @@ describe('comandasController', () => {
             comandaId: CHARGE_DATA.comandaId,
             type: 'charge',
             description: CHARGE_DATA.description,
-            amount: CHARGE_DATA.value
+            amount: CHARGE_DATA.value,
+            createdAt: expect.any(String)
           })
         })
 
@@ -247,7 +254,8 @@ describe('comandasController', () => {
             comandaId: CHARGE_DATA.comandaId,
             type: 'payment',
             description: CHARGE_DATA.description,
-            amount: CHARGE_DATA.value
+            amount: CHARGE_DATA.value,
+            createdAt: expect.any(String)
           })
         })
 

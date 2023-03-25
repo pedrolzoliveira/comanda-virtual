@@ -22,7 +22,8 @@ describe('addCharge', () => {
         comandaId,
         description: CHARGE_DATA.description,
         amount: CHARGE_DATA.value,
-        type: 'charge'
+        type: 'charge',
+        createdAt: expect.any(Date)
       })
     })
   })

@@ -20,7 +20,8 @@ describe('createComanda', () => {
         id: expect.any(String),
         name: COMANDA_PROPS.name,
         cellPhone: COMANDA_PROPS.cellPhone,
-        amount: 0
+        amount: 0,
+        createdAt: expect.any(Date)
       })
     })
   })

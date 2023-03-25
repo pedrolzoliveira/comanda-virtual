@@ -8,6 +8,10 @@ export const getComanda = (id: string, options: getComandaOptions = {}) =>
   prismaClient.comanda.findUnique({
     where: { id },
     include: {
-      transactions: Boolean(options.transactions)
+      transactions: options.transactions
+        ? {
+            orderBy: { createdAt: 'desc' }
+          }
+        : false
     }
   })

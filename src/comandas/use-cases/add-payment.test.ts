@@ -22,7 +22,8 @@ describe('addPayment', () => {
         comandaId,
         description: PAYMENT_DATA.description,
         amount: PAYMENT_DATA.value,
-        type: 'payment'
+        type: 'payment',
+        createdAt: expect.any(Date)
       })
     })
   })

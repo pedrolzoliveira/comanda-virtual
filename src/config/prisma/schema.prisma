@@ -13,6 +13,7 @@ model Comanda {
 	name String
 	amount Int
 	transactions Transaction[]
+	createdAt DateTime @default(now())
 }
 
 model Transaction {
@@ -22,6 +23,7 @@ model Transaction {
 	description String
 	amount Int
 	type TransactionType
+	createdAt DateTime @default(now())
 }
 
 enum TransactionType {
