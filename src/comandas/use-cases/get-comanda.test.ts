@@ -1,12 +1,13 @@
 import { factory } from '@/utils/test/factory'
+import { type Comanda, type Transaction } from '@prisma/client'
 import { getComanda } from './get-comanda'
 
 describe('getComanda', () => {
-  let COMANDA_DATA: Awaited<ReturnType<typeof factory.createComanda>>
-  let TRANSACTIONS: Array<Awaited<ReturnType<typeof factory.createTransaction>>>
+  let COMANDA_DATA: Comanda
+  let TRANSACTIONS: Transaction[]
   beforeAll(async () => {
     COMANDA_DATA = await factory.createComanda()
-    TRANSACTIONS = await Promise.all(new Array(2).fill(null).map(async () => await factory.createTransaction({ comandaId: COMANDA_DATA.id })))
+    TRANSACTIONS = await Promise.all(Array(2).fill(null).map(async () => await factory.createTransaction({ comandaId: COMANDA_DATA.id })))
   })
 
   describe('gets a comanda', () => {
