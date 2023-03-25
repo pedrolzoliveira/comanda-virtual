@@ -2,6 +2,7 @@ import { schemaValidator } from '@/http/middlawares/schema-validator'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import { type Request, type Response } from 'express'
 import { addCharge } from './use-cases/add-charge'
+import { addPayment } from './use-cases/add-payment'
 import { createComanda } from './use-cases/create-comanda'
 
 export const comandasController = {
@@ -35,6 +36,31 @@ export const comandasController = {
     async (req: Request, res: Response) => {
       try {
         const charge = await addCharge(req.body)
+        return res.status(201).send(charge)
+      } catch (error) {
+        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
+          return res.sendStatus(404)
+        }
+
+        return res.sendStatus(500)
+      }
+    }
+  ],
+  addPayment: [
+    schemaValidator({
+      comandaId: {
+        isUUID: true
+      },
+      description: {
+        isString: true
+      },
+      value: {
+        isInt: true
+      }
+    }),
+    async (req: Request, res: Response) => {
+      try {
+        const charge = await addPayment(req.body)
         return res.status(201).send(charge)
       } catch (error) {
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
