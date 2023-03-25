@@ -3,6 +3,8 @@ import { comandasController } from './controller'
 
 export const comandasRouter = Router()
 
+comandasRouter.get('/', ...comandasController.get)
+
 comandasRouter.post('/', ...comandasController.create)
 comandasRouter.post('/charges', ...comandasController.addCharge)
 comandasRouter.post('/payments', ...comandasController.addPayment)

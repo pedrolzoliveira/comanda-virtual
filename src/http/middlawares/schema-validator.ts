@@ -1,5 +1,5 @@
 import { type NextFunction, type Request, type Response } from 'express'
-import { checkSchema, type Schema } from 'express-validator'
+import { checkSchema, matchedData, type Schema } from 'express-validator'
 
 export const schemaValidator = (schema: Schema) => {
   return async(req: Request, res: Response, next: NextFunction) => {
@@ -11,6 +11,7 @@ export const schemaValidator = (schema: Schema) => {
         schema
       })
     } else {
+      req.data = matchedData(req)
       next()
     }
   }

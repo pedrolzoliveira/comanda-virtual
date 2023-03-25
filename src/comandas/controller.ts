@@ -4,8 +4,26 @@ import { type Request, type Response } from 'express'
 import { addCharge } from './use-cases/add-charge'
 import { addPayment } from './use-cases/add-payment'
 import { createComanda } from './use-cases/create-comanda'
+import { getComanda } from './use-cases/get-comanda'
 
 export const comandasController = {
+  get: [
+    schemaValidator({
+      id: {
+        in: 'query',
+        isUUID: true
+      },
+      transactions: {
+        in: 'query',
+        isBoolean: true,
+        optional: true
+      }
+    }),
+    async (req: Request, res: Response) => {
+      const comanda = await getComanda(req.data.id, { transactions: req.data.transactions })
+      return res.status(200).send(comanda)
+    }
+  ],
   create: [
     schemaValidator({
       name: {
@@ -16,8 +34,7 @@ export const comandasController = {
       }
     }),
     async (req: Request, res: Response) => {
-      const data = req.body
-      const comanda = await createComanda(data)
+      const comanda = await createComanda(req.data)
       return res.status(201).send(comanda)
     }
   ],
@@ -35,7 +52,7 @@ export const comandasController = {
     }),
     async (req: Request, res: Response) => {
       try {
-        const charge = await addCharge(req.body)
+        const charge = await addCharge(req.data)
         return res.status(201).send(charge)
       } catch (error) {
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
@@ -60,7 +77,7 @@ export const comandasController = {
     }),
     async (req: Request, res: Response) => {
       try {
-        const charge = await addPayment(req.body)
+        const charge = await addPayment(req.data)
         return res.status(201).send(charge)
       } catch (error) {
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
