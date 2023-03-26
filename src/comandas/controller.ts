@@ -1,3 +1,5 @@
+import { HttpError } from '@/http/errors/http-error'
+import { HttpStatusCode } from '@/http/http-status-code'
 import { schemaValidator } from '@/http/middlawares/schema-validator'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import { type Request, type Response } from 'express'
@@ -22,7 +24,7 @@ export const comandasController = {
     }),
     async (req: Request, res: Response) => {
       const comanda = await getComanda(req.data.id, { transactions: req.data.transactions })
-      return res.status(200).send(comanda)
+      return res.status(HttpStatusCode.OK).send(comanda)
     }
   ],
   create: [
@@ -36,7 +38,7 @@ export const comandasController = {
     }),
     async (req: Request, res: Response) => {
       const comanda = await createComanda(req.data)
-      return res.status(201).send(comanda)
+      return res.status(HttpStatusCode.CREATED).send(comanda)
     }
   ],
   addCharge: [
@@ -54,13 +56,15 @@ export const comandasController = {
     async (req: Request, res: Response) => {
       try {
         const charge = await addCharge(req.data)
-        return res.status(201).send(charge)
+        return res.status(HttpStatusCode.CREATED).send(charge)
       } catch (error) {
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
-          return res.sendStatus(404)
+          throw new HttpError(
+            'NOT_FOUND',
+            'Comanda not found'
+          )
         }
-
-        return res.sendStatus(500)
+        throw new HttpError('INTERNAL_SERVER_ERROR')
       }
     }
   ],
@@ -79,13 +83,15 @@ export const comandasController = {
     async (req: Request, res: Response) => {
       try {
         const charge = await addPayment(req.data)
-        return res.status(201).send(charge)
+        return res.status(HttpStatusCode.CREATED).send(charge)
       } catch (error) {
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
-          return res.sendStatus(404)
+          throw new HttpError(
+            'NOT_FOUND',
+            'Comanda not found'
+          )
         }
-
-        return res.sendStatus(500)
+        throw new HttpError('INTERNAL_SERVER_ERROR')
       }
     }
   ]

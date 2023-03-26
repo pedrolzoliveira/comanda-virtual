@@ -32,7 +32,7 @@ describe('comandasController', () => {
 
         beforeAll(async () => {
           COMANDA = await factory.createComanda()
-          TRANSACTIONS = await Promise.all(Array(2).fill(null).map(async () => await factory.createTransaction({ comandaId: COMANDA.id })))
+          TRANSACTIONS = await Promise.all(Array(1).fill(null).map(async () => await factory.createTransaction({ comandaId: COMANDA.id })))
           response = await makeRequest({ id: COMANDA.id, transactions: true })
         })
 

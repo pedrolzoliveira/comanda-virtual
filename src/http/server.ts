@@ -1,3 +1,4 @@
+import 'express-async-errors'
 import express, { json } from 'express'
 import cors from 'cors'
 import { env } from '@/config/env'
