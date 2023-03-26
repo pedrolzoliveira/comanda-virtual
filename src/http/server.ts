@@ -1,8 +1,8 @@
 import express, { json } from 'express'
-import { routes } from './routes'
 import cors from 'cors'
 import { env } from '@/config/env'
 import { errorHandler } from './middlawares/error-handler'
+import { routes } from './routes'
 
 export const server = express()
 

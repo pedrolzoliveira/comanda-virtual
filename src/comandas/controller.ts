@@ -16,6 +16,7 @@ export const comandasController = {
       transactions: {
         in: 'query',
         isBoolean: true,
+        toBoolean: true,
         optional: true
       }
     }),
