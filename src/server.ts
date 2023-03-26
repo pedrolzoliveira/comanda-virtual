@@ -1,3 +1,4 @@
+import { env } from '@/config/env'
 import { server } from './http/server'
 
-server.listen(3030)
+server.listen(env.PORT)
