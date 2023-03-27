@@ -15,7 +15,7 @@
     "eslint-plugin-n": "^15.0.0",
     "eslint-plugin-promise": "^6.0.0",
     "jest": "^29.4.3",
-    "nodemon": "^2.0.20",
+    "nodemon": "^2.0.22",
     "supertest": "^6.3.3",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
@@ -35,7 +35,7 @@
   },
   "scripts": {
     "prisma:migrate": "prisma migrate dev --schema=./src/config/prisma/schema.prisma --name $1",
-    "fala": "echo $1",
+    "dev": "nodemon --watch 'src/' --exec 'ts-node --transpileOnly src/server' -e ts",
     "test": "jest"
   }
 }
