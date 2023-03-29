@@ -1,5 +1,7 @@
+import { prismaClient } from '@/config/prisma/client'
 import { factory } from '@/utils/test/factory'
 import { faker } from '@faker-js/faker'
+import { type Comanda, type Transaction } from '@prisma/client'
 import { addCharge } from './add-charge'
 
 describe('addCharge', () => {
@@ -9,15 +11,21 @@ describe('addCharge', () => {
   })
 
   describe('adds charge to comanda', () => {
-    it('creates a transaction of type charge', async () => {
-      const CHARGE_DATA = {
-        comandaId,
-        description: faker.random.words(5),
-        value: 1000
-      }
-      await expect(
-        addCharge(CHARGE_DATA)
-      ).resolves.toEqual({
+    let comanda: Comanda
+    let charge: Transaction
+
+    const CHARGE_DATA = {
+      description: faker.random.words(5),
+      value: 1000
+    }
+
+    beforeAll(async () => {
+      charge = await addCharge({ ...CHARGE_DATA, comandaId })
+      comanda = await prismaClient.comanda.findUnique({ where: { id: comandaId } }) as Comanda
+    })
+
+    it('creates a transaction of type charge', () => {
+      expect(charge).toEqual({
         id: expect.any(String),
         comandaId,
         description: CHARGE_DATA.description,
@@ -25,6 +33,10 @@ describe('addCharge', () => {
         type: 'charge',
         createdAt: expect.any(Date)
       })
+    })
+
+    it("increase comanda's values", () => {
+      expect(comanda.amount).toBe(1000)
     })
   })
 })
