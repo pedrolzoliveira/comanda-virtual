@@ -132,6 +132,17 @@ describe('comandasController', () => {
           expect(response.statusCode).toBe(400)
         })
       })
+      describe('tries to create a comanda with a callPhone already taken', () => {
+        beforeAll(async () => {
+          const cellPhone = '13999999999'
+          await factory.createComanda({ cellPhone })
+          response = await makeRequest({ name: faker.name.fullName(), cellPhone })
+        })
+
+        it('rerturns 409', () => {
+          expect(response.statusCode).toBe(409)
+        })
+      })
     })
   })
   describe('POST /comandas/charges', () => {

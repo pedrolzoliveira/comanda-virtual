@@ -1,6 +1,7 @@
 import { HttpError } from '@/http/errors/http-error'
 import { HttpStatusCode } from '@/http/http-status-code'
 import { schemaValidator } from '@/http/middlawares/schema-validator'
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 import { type Request, type Response } from 'express'
 import { ComandaNotFound } from './errors/comanda-not-found'
 import { addCharge } from './use-cases/add-charge'
@@ -37,8 +38,16 @@ export const comandasController = {
       }
     }),
     async (req: Request, res: Response) => {
-      const comanda = await createComanda(req.data)
-      return res.status(HttpStatusCode.CREATED).send(comanda)
+      try {
+        const comanda = await createComanda(req.data)
+        return res.status(HttpStatusCode.CREATED).send(comanda)
+      } catch (error) {
+        console.log(error)
+        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+          throw new HttpError('CONFLICT', 'CellPhone already taken')
+        }
+        throw new HttpError('INTERNAL_SERVER_ERROR')
+      }
     }
   ],
   addCharge: [
