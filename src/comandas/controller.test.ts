@@ -64,15 +64,6 @@ describe('comandasController', () => {
           expect(response.statusCode).toBe(400)
         })
       })
-      describe('tries to make a request without an id', () => {
-        beforeAll(async () => {
-          response = await makeRequest({})
-        })
-
-        it('returns 400', () => {
-          expect(response.statusCode).toBe(400)
-        })
-      })
       describe('tries to make a request with a random word as id', () => {
         beforeAll(async () => {
           response = await makeRequest({ id: faker.random.word() })

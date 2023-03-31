@@ -1,3 +1,4 @@
+import { prismaClient } from '@/config/prisma/client'
 import { HttpError } from '@/http/errors/http-error'
 import { HttpStatusCode } from '@/http/http-status-code'
 import { schemaValidator } from '@/http/middlawares/schema-validator'
@@ -7,14 +8,26 @@ import { ComandaNotFound } from './errors/comanda-not-found'
 import { addCharge } from './use-cases/add-charge'
 import { addPayment } from './use-cases/add-payment'
 import { createComanda } from './use-cases/create-comanda'
-import { getComanda } from './use-cases/get-comanda'
+
+interface GetRequest extends Request {
+  data: {
+    id?: string | string[]
+    transactions?: boolean
+  }
+}
 
 export const comandasController = {
   get: [
     schemaValidator({
       id: {
         in: 'query',
-        isUUID: true
+        isUUID: true,
+        optional: true
+      },
+      'id.*': {
+        in: 'query',
+        isUUID: true,
+        optional: true
       },
       transactions: {
         in: 'query',
@@ -23,9 +36,37 @@ export const comandasController = {
         optional: true
       }
     }),
-    async (req: Request, res: Response) => {
-      const comanda = await getComanda(req.data.id, { transactions: req.data.transactions })
-      return res.status(HttpStatusCode.OK).send(comanda)
+    async (req: GetRequest, res: Response) => {
+      const { id, transactions } = req.data
+
+      switch (typeof id) {
+        case 'string': {
+          const comanda = await prismaClient.comanda.findUnique({
+            where: { id },
+            include: { transactions: Boolean(transactions) }
+          })
+
+          if (!comanda) {
+            throw new HttpError('NOT_FOUND', 'Comanda not found')
+          }
+
+          return res.status(HttpStatusCode.OK).send(comanda)
+        }
+        case 'object': {
+          const comandas = await prismaClient.comanda.findMany({
+            where: { id: { in: id } },
+            include: { transactions: Boolean(transactions) }
+          })
+
+          return res.status(HttpStatusCode.OK).send(comandas)
+        }
+
+        default: {
+          const comandas = await prismaClient.comanda.findMany({ include: { transactions: Boolean(transactions) } })
+
+          return res.status(HttpStatusCode.OK).send(comandas)
+        }
+      }
     }
   ],
   create: [
