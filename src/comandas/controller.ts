@@ -74,7 +74,7 @@ export const comandasController = {
       name: {
         isString: true
       },
-      cellPhone: {
+      cellphone: {
         isString: true
       }
     }),
@@ -85,7 +85,7 @@ export const comandasController = {
       } catch (error) {
         console.log(error)
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
-          throw new HttpError('CONFLICT', 'CellPhone already taken')
+          throw new HttpError('CONFLICT', 'Cellphone already taken')
         }
         throw new HttpError('INTERNAL_SERVER_ERROR')
       }

@@ -81,7 +81,7 @@ describe('comandasController', () => {
     describe('2XX', () => {
       const COMANDA_DATA = {
         name: faker.name.fullName(),
-        cellPhone: faker.phone.number()
+        cellphone: faker.phone.number()
       }
 
       describe('creates a comanda', () => {
@@ -97,7 +97,7 @@ describe('comandasController', () => {
           expect(response.body).toEqual({
             id: expect.any(String),
             name: COMANDA_DATA.name,
-            cellPhone: COMANDA_DATA.cellPhone,
+            cellphone: COMANDA_DATA.cellphone,
             amount: 0,
             createdAt: expect.any(String)
           })
@@ -107,7 +107,7 @@ describe('comandasController', () => {
     describe('4XX', () => {
       describe('tries to create a request withou name', () => {
         beforeAll(async () => {
-          response = await makeRequest({ cellPhone: faker.phone.number() })
+          response = await makeRequest({ cellphone: faker.phone.number() })
         })
 
         it('returns 400', () => {
@@ -125,9 +125,9 @@ describe('comandasController', () => {
       })
       describe('tries to create a comanda with a callPhone already taken', () => {
         beforeAll(async () => {
-          const cellPhone = '13999999999'
-          await factory.createComanda({ cellPhone })
-          response = await makeRequest({ name: faker.name.fullName(), cellPhone })
+          const cellphone = '13999999999'
+          await factory.createComanda({ cellphone })
+          response = await makeRequest({ name: faker.name.fullName(), cellphone })
         })
 
         it('rerturns 409', () => {

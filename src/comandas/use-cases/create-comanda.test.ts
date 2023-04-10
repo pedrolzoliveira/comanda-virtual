@@ -8,7 +8,7 @@ describe('createComanda', () => {
 
     const COMANDA_PROPS = {
       name: faker.name.fullName(),
-      cellPhone: faker.phone.number()
+      cellphone: faker.phone.number()
     }
 
     beforeAll(async () => {
@@ -19,7 +19,7 @@ describe('createComanda', () => {
       expect(comanda).toEqual({
         id: expect.any(String),
         name: COMANDA_PROPS.name,
-        cellPhone: COMANDA_PROPS.cellPhone,
+        cellphone: COMANDA_PROPS.cellphone,
         amount: 0,
         createdAt: expect.any(Date)
       })
@@ -31,7 +31,7 @@ describe('createComanda', () => {
     beforeAll(async () => {
       return await createComanda({
         name: faker.name.fullName(),
-        cellPhone: CELL_PHONE
+        cellphone: CELL_PHONE
       })
     })
 
@@ -39,7 +39,7 @@ describe('createComanda', () => {
       await expect(
         createComanda({
           name: faker.name.fullName(),
-          cellPhone: CELL_PHONE
+          cellphone: CELL_PHONE
         })
       ).rejects.toThrow()
     })

@@ -9,7 +9,7 @@ datasource db {
 
 model Comanda {
 	id String @id @default(uuid())
-	cellPhone String @unique
+	cellphone String @unique
 	name String
 	amount Int
 	transactions Transaction[]
