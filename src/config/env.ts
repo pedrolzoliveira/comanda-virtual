@@ -1,20 +1,9 @@
 import 'dotenv/config'
+import { z } from 'zod'
 
-class MissingEnv extends Error {
-  constructor(variable: string) {
-    super(`missing env var ${variable}`)
-  }
-}
+const envSchema = z.object({
+  PORT: z.number().default(3030),
+  CORS_ORIGIN: z.string().url()
+})
 
-const createEnv = () => {
-  const CORS_ORIGIN = process.env.CORS_ORIGIN
-  if (!CORS_ORIGIN) {
-    throw new MissingEnv('CORS_ORIGIN')
-  }
-  return {
-    PORT: Number(process.env.PORT ?? 3030),
-    CORS_ORIGIN
-  } as const
-}
-
-export const env = createEnv()
+export const env = envSchema.parse(process.env)
