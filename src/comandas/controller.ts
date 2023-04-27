@@ -8,6 +8,7 @@ import { ComandaNotFound } from './errors/comanda-not-found'
 import { addCharge } from './use-cases/add-charge'
 import { addPayment } from './use-cases/add-payment'
 import { createComanda } from './use-cases/create-comanda'
+import { addAdjustment } from './use-cases/add-adjustment'
 
 interface GetRequest extends Request {
   data: {
@@ -43,7 +44,15 @@ export const comandasController = {
         case 'string': {
           const comanda = await prismaClient.comanda.findUnique({
             where: { id },
-            include: { transactions: Boolean(transactions) }
+            include: {
+              transactions: !transactions
+                ? false
+                : {
+                    orderBy: {
+                      createdAt: 'desc'
+                    }
+                  }
+            }
           })
 
           if (!comanda) {
@@ -134,6 +143,30 @@ export const comandasController = {
       try {
         const charge = await addPayment(req.data)
         return res.status(HttpStatusCode.CREATED).send(charge)
+      } catch (error) {
+        if (error instanceof ComandaNotFound) {
+          throw new HttpError(
+            'NOT_FOUND',
+            'Comanda not found'
+          )
+        }
+        throw new HttpError('INTERNAL_SERVER_ERROR')
+      }
+    }
+  ],
+  addAdjustment: [
+    schemaValidator({
+      comandaId: {
+        isUUID: true
+      },
+      value: {
+        isInt: true
+      }
+    }),
+    async (req: Request, res: Response) => {
+      try {
+        const adjustment = await addAdjustment(req.data)
+        return res.status(HttpStatusCode.CREATED).send(adjustment)
       } catch (error) {
         if (error instanceof ComandaNotFound) {
           throw new HttpError(

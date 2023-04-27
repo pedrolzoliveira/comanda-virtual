@@ -29,4 +29,5 @@ model Transaction {
 enum TransactionType {
 	payment
 	charge
+	adjustment
 }
