@@ -9,6 +9,7 @@ import { addCharge } from './use-cases/add-charge'
 import { addPayment } from './use-cases/add-payment'
 import { createComanda } from './use-cases/create-comanda'
 import { addAdjustment } from './use-cases/add-adjustment'
+import { updateComanda } from './use-cases/update-comanda'
 
 interface GetRequest extends Request {
   data: {
@@ -91,6 +92,31 @@ export const comandasController = {
       try {
         const comanda = await createComanda(req.data)
         return res.status(HttpStatusCode.CREATED).send(comanda)
+      } catch (error) {
+        console.log(error)
+        if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
+          throw new HttpError('CONFLICT', 'Cellphone already taken')
+        }
+        throw new HttpError('INTERNAL_SERVER_ERROR')
+      }
+    }
+  ],
+  update: [
+    schemaValidator({
+      id: {
+        isUUID: true
+      },
+      name: {
+        isString: true
+      },
+      cellphone: {
+        isString: true
+      }
+    }),
+    async (req: Request, res: Response) => {
+      try {
+        const comanda = await updateComanda(req.data)
+        return res.status(HttpStatusCode.OK).send(comanda)
       } catch (error) {
         console.log(error)
         if (error instanceof PrismaClientKnownRequestError && error.code === 'P2002') {
