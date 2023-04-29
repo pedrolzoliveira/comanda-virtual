@@ -10,6 +10,7 @@ import { addPayment } from './use-cases/add-payment'
 import { createComanda } from './use-cases/create-comanda'
 import { addAdjustment } from './use-cases/add-adjustment'
 import { updateComanda } from './use-cases/update-comanda'
+import { adjustAmount } from './use-cases/adjust-amount'
 
 interface GetRequest extends Request {
   data: {
@@ -124,6 +125,21 @@ export const comandasController = {
         }
         throw new HttpError('INTERNAL_SERVER_ERROR')
       }
+    }
+  ],
+  adjustAmount: [
+    schemaValidator({
+      id: {
+        isUUID: true
+      },
+      amount: {
+        isInt: true,
+        toInt: true
+      }
+    }),
+    async (req: Request, res: Response) => {
+      const comanda = await adjustAmount(req.data)
+      return res.status(HttpStatusCode.OK).send(comanda)
     }
   ],
   addCharge: [
